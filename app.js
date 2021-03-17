@@ -1,4 +1,4 @@
-require("dotenv").config()
+require("dotenv").config();
 
 var createError = require("http-errors");
 var express = require("express");
@@ -17,8 +17,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-const jwt = require("jsonwebtoken")
-app.use(express.json())
+const jwt = require("jsonwebtoken");
+app.use(express.json());
 
 // data
 const posts = [
@@ -37,31 +37,36 @@ app.get("/", authenticateToken, (req, res) => {
   res.json({ message: "Welcome to hello express jwt." });
 });
 
-app.get('/posts', authenticateToken, (req, res) => {
-  res.json(posts.filter(post => post.username === req.user.name))
-})
+app.get("/posts", authenticateToken, (req, res) => {
+  // verify authenticateToken
+  // and get token from headers
+  // decode to get data from jwt
+  const decodeJwt = jwt.decode(req.headers.authorization.split(" ")[1]);
+  res.json(posts.filter((post) => post.username === decodeJwt.name));
+});
 
 app.post("/login", (req, res) => {
   // authenticate user
-  const username = req.body.username
-  const user = { name: username }
+  const username = req.body.username;
+  const user = { name: username };
   console.log("user ", user);
 
-  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-  res.json({ accessToken: accessToken })
+  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: 30,
+  });
+  res.json({ accessToken: accessToken });
 });
 
 // authenticate middleware
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-  if (token == null) return res.sendStatus(401)
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403)
-    res.user = user
-    next()
-  })
+    if (err) return res.sendStatus(403);
+    next();
+  });
 }
 
 // catch 404 and forward to error handler

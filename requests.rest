@@ -1,12 +1,14 @@
+# add token and send request
 GET http://localhost:3000
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiRGFuaWVsIiwiaWF0IjoxNjE1OTc1MzcwfQ.z20dKfvMNcQoN9gKlYRFHovxWoFd4yXm7be9hqL1AOA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiRGFuaWVsIiwiaWF0IjoxNjE2MDAyNTY0LCJleHAiOjE2MTYwMDI1OTR9.vdfjV9d43QKFgR93xIZBFZ1Xm-L7KBf-CPboY9dFP4A
 
 ###
 
 GET http://localhost:3000/posts
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiRGFuaWVsIiwiaWF0IjoxNjE1OTc2MDM5fQ.ADYKFnH7XHBLb1-byrnmLlhMfmP3zRmykoeOfOE_YdU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiRGFuaWVsIiwiaWF0IjoxNjE2MDAyNjAwLCJleHAiOjE2MTYwMDI2MzB9.yIqGP7RsHS-8dDZEBeupWJ8Y4M-WBC7hezgPwcsCGDs
 ###
 
+# login to get token
 POST http://localhost:3000/login
 Content-Type: application/json
 
