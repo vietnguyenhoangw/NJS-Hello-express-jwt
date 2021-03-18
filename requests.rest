@@ -5,7 +5,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiRGFuaWVsI
 ###
 
 GET http://localhost:3000/posts
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiRGFuaWVsIiwiaWF0IjoxNjE2MDAyNjAwLCJleHAiOjE2MTYwMDI2MzB9.yIqGP7RsHS-8dDZEBeupWJ8Y4M-WBC7hezgPwcsCGDs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiRGFuaWVsIiwiaWF0IjoxNjE2MDM1NTc3LCJleHAiOjE2MTYwMzg1Nzd9.P4qrp9ZZ25RsxHv7PwZeyB0cXFRvrLVmui-DQMuhCkY
 ###
 
 # login to get token

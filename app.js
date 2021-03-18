@@ -38,11 +38,7 @@ app.get("/", authenticateToken, (req, res) => {
 });
 
 app.get("/posts", authenticateToken, (req, res) => {
-  // verify authenticateToken
-  // and get token from headers
-  // decode to get data from jwt
-  const decodeJwt = jwt.decode(req.headers.authorization.split(" ")[1]);
-  res.json(posts.filter((post) => post.username === decodeJwt.name));
+  res.json(posts.filter((post) => post.username === req.user.name));
 });
 
 app.post("/login", (req, res) => {
@@ -52,7 +48,7 @@ app.post("/login", (req, res) => {
   console.log("user ", user);
 
   const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: 30,
+    expiresIn: 3000,
   });
   res.json({ accessToken: accessToken });
 });
@@ -65,6 +61,7 @@ function authenticateToken(req, res, next) {
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
+    req.user = user
     next();
   });
 }
