@@ -21,14 +21,16 @@ const jwt = require("jsonwebtoken");
 app.use(express.json());
 
 // data
-const posts = [
+const users = [
   {
     username: "Daniel",
     title: "Daniel and friends",
+    password: "123123"
   },
   {
     username: "Henry",
     title: "Henry and his girl friend",
+    password: "123123"
   },
 ];
 
@@ -44,14 +46,60 @@ app.get("/posts", authenticateToken, (req, res) => {
 app.post("/login", (req, res) => {
   // authenticate user
   const username = req.body.username;
-  const user = { name: username };
-  console.log("user ", user);
-
-  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: 3000,
-  });
-  res.json({ accessToken: accessToken });
+  const password = req.body.password;
+  const exitUser = users.filter((user) => {
+    return user.username === username ? user : ""
+  })
+  if (exitUser) {
+    const isCorrectPassword = exitUser.password === password
+    if (isCorrectPassword) {
+      const accessToken = jwt.sign(exitUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
+      res.status(200)
+      res.statusCode(200)
+      res.json({ accessToken: accessToken });
+    } else {
+      res.status(403)
+      res.sendStatus(403)
+      res.json({ "error": "wrong password" });
+    }
+  } else {
+    res.status(404)
+    res.statusCode(404)
+    res.json({ "error": "user not found " })
+  }
 });
+
+app.post("/register", (req, res) => {
+  const username = req.body?.username
+  const password = req.body?.password
+  const title = req.body?.title
+  if (!user) {
+    return res.statusCode(411)
+  } else {
+    const isExitUser = users.filter((user) => {
+      if (user.username === username) {
+        return true
+      }
+    })
+    if (isExitUser) {
+      res.status(404).statusCode(404).json({ "error": "user is already exits" })
+    } else {
+      // authenticate user
+      const user = {
+        "username": username,
+        "password": password,
+        "title": title
+      }
+      const token = generateAccessToken(user);
+      res.status(200).statusCode(200).json({ accessToken: token });
+    }
+  }
+});
+
+function generateAccessToken(username) {
+  // expires after half and hour (1800 seconds = 30 minutes)
+  return jwt.sign(username, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
+}
 
 // authenticate middleware
 function authenticateToken(req, res, next) {
@@ -60,7 +108,7 @@ function authenticateToken(req, res, next) {
   if (token == null) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
+    if (err) return res.status(403).sendStatus(403).json({ "error": "error token" });
     req.user = user
     next();
   });
