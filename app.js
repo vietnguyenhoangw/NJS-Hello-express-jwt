@@ -6,6 +6,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var app = express();
+var timeout = require("connect-timeout");
 
 // view engine setup - envirroment setup
 app.set("views", path.join(__dirname, "views"));
@@ -17,21 +18,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use(timeout(120000));
+app.use(haltOnTimedout);
+
+function haltOnTimedout(req, res, next) {
+  if (!req.timedout) {
+    next();
+  } else {
+    req.statusCode(408).json({
+      message: "request time out",
+    });
+  }
+}
+
 const jwt = require("jsonwebtoken");
 app.use(express.json());
 
 // data
 const users = [
-  {
-    username: "Daniel",
-    title: "Daniel and friends",
-    password: "123123"
-  },
-  {
-    username: "Henry",
-    title: "Henry and his girl friend",
-    password: "123123"
-  },
+  { username: "Daniel", title: "Daniel and friends", password: "123123" },
+  { username: "Henry", title: "Henry and his girl friend", password: "123123" },
 ];
 
 // simple route
@@ -39,8 +45,8 @@ app.get("/", authenticateToken, (req, res) => {
   res.json({ message: "Welcome to hello express jwt." });
 });
 
-app.get("/posts", authenticateToken, (req, res) => {
-  res.json(posts.filter((post) => post.username === req.user.name));
+app.get("/user", authenticateToken, (req, res) => {
+  res.json(users.filter((user) => user.username === req.user.username));
 });
 
 app.post("/login", (req, res) => {
@@ -48,57 +54,64 @@ app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   const exitUser = users.filter((user) => {
-    return user.username === username ? user : ""
-  })
-  if (exitUser) {
-    const isCorrectPassword = exitUser.password === password
+    return user.username === username ? user : "";
+  });
+  if (exitUser.length > 0) {
+    const exitUserPassword = JSON.parse(exitUser[0].password);
+    const isCorrectPassword = exitUserPassword.toString() === password;
     if (isCorrectPassword) {
-      const accessToken = jwt.sign(exitUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
-      res.status(200)
-      res.statusCode(200)
-      res.json({ accessToken: accessToken });
+      const accessToken = jwt.sign(
+        exitUser[0],
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+          expiresIn: "1800s",
+        }
+      );
+      res.status(200).json({ accessToken: accessToken });
+      res.end();
     } else {
-      res.status(403)
-      res.sendStatus(403)
-      res.json({ "error": "wrong password" });
+      res.status(403).json({ message: "wrong password" });
+      res.end();
     }
   } else {
-    res.status(404)
-    res.statusCode(404)
-    res.json({ "error": "user not found " })
+    res.status(404).json({ message: "user not found " });
+    res.end();
   }
 });
 
 app.post("/register", (req, res) => {
-  const username = req.body?.username
-  const password = req.body?.password
-  const title = req.body?.title
-  if (!user) {
-    return res.statusCode(411)
+  const username = req.body.username;
+  const password = req.body.password;
+  const title = req.body.title;
+  if (!username || !password || !title) {
+    return res.status(411).json({ message: "paramester is invalid" });
   } else {
     const isExitUser = users.filter((user) => {
-      if (user.username === username) {
-        return true
+      if (user.username.toString() === username.toString()) {
+        return true;
       }
-    })
-    if (isExitUser) {
-      res.status(404).statusCode(404).json({ "error": "user is already exits" })
+    });
+    if (isExitUser.length > 0) {
+      res.status(404).status(404).json({ error: "user is already exits" });
     } else {
       // authenticate user
       const user = {
-        "username": username,
-        "password": password,
-        "title": title
-      }
+        username,
+        password,
+        title,
+      };
       const token = generateAccessToken(user);
-      res.status(200).statusCode(200).json({ accessToken: token });
+      users.push(user);
+      res.status(200).status(200).json({ accessToken: token });
     }
   }
 });
 
 function generateAccessToken(username) {
   // expires after half and hour (1800 seconds = 30 minutes)
-  return jwt.sign(username, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1800s' });
+  return jwt.sign(username, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "1800s",
+  });
 }
 
 // authenticate middleware
@@ -108,8 +121,9 @@ function authenticateToken(req, res, next) {
   if (token == null) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.status(403).sendStatus(403).json({ "error": "error token" });
-    req.user = user
+    if (err)
+      return res.status(403).sendStatus(403).json({ message: "error token" });
+    req.user = user;
     next();
   });
 }
