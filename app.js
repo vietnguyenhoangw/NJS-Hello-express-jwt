@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(timeout(120000));
+app.use(timeout(60000));
 app.use(haltOnTimedout);
 
 function haltOnTimedout(req, res, next) {
@@ -39,14 +39,15 @@ const users = [
   { username: "Daniel", title: "Daniel and friends", password: "123123" },
   { username: "Henry", title: "Henry and his girl friend", password: "123123" },
 ];
+const refreshTokens = []
 
 // simple route
 app.get("/", authenticateToken, (req, res) => {
-  res.json({ message: "Welcome to hello express jwt." });
+  res.status(200).json({ message: "Welcome to hello express jwt.", error: false });
 });
 
 app.get("/user", authenticateToken, (req, res) => {
-  res.json(users.filter((user) => user.username === req.user.username));
+  res.status(200).json(users.filter((user) => user.username === req.user.username));
 });
 
 app.post("/login", (req, res) => {
@@ -60,21 +61,17 @@ app.post("/login", (req, res) => {
     const exitUserPassword = JSON.parse(exitUser[0].password);
     const isCorrectPassword = exitUserPassword.toString() === password;
     if (isCorrectPassword) {
-      const accessToken = jwt.sign(
-        exitUser[0],
-        process.env.ACCESS_TOKEN_SECRET,
-        {
-          expiresIn: "1800s",
-        }
-      );
-      res.status(200).json({ accessToken: accessToken });
+      const accessToken = generateAccessToken(exitUser[0])
+      const refreshToken = jwt.sign(exitUser[0], process.env.REFRESH_TOKEN_SECRET)
+      refreshTokens.push(refreshToken)
+      res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken, error: false });
       res.end();
     } else {
-      res.status(403).json({ message: "wrong password" });
+      res.status(403).json({ message: "wrong password", error: true });
       res.end();
     }
   } else {
-    res.status(404).json({ message: "user not found " });
+    res.status(404).json({ message: "user not found", error: true });
     res.end();
   }
 });
@@ -84,7 +81,7 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   const title = req.body.title;
   if (!username || !password || !title) {
-    return res.status(411).json({ message: "paramester is invalid" });
+    return res.status(411).json({ message: "paramester is invalid", error: true });
   } else {
     const isExitUser = users.filter((user) => {
       if (user.username.toString() === username.toString()) {
@@ -92,7 +89,7 @@ app.post("/register", (req, res) => {
       }
     });
     if (isExitUser.length > 0) {
-      res.status(404).status(404).json({ error: "user is already exits" });
+      res.status(404).json({ error: "user is already exits", error: true });
     } else {
       // authenticate user
       const user = {
@@ -101,16 +98,35 @@ app.post("/register", (req, res) => {
         title,
       };
       const token = generateAccessToken(user);
+      const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
       users.push(user);
-      res.status(200).status(200).json({ accessToken: token });
+      refreshTokens.push(refreshToken)
+      res.status(200).json({ accessToken: token, refreshToken: refreshToken, error: false });
     }
   }
 });
 
+app.post('/token', (req, res) => {
+  const refreshToken = req.body.refreshToken
+  if (!refreshToken) return res.status(403).json({ message: "token param is invalid", error: true });
+  if (!refreshTokens.includes(refreshToken)) return res.status(403).json({ message: "refresh token param is invalid", error: true });
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: "have an error when verify token", error: true });
+    const tokenUser = {
+      username: user.username,
+      title: user.title,
+      password: user.password
+    }
+    const accessToken = generateAccessToken(tokenUser)
+    res.status(200).json({ accessToken: accessToken, error: false });
+  })
+})
+
+// generate a token
 function generateAccessToken(username) {
   // expires after half and hour (1800 seconds = 30 minutes)
   return jwt.sign(username, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "1800s",
+    expiresIn: "30s",
   });
 }
 
@@ -119,10 +135,9 @@ function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null) return res.sendStatus(401);
-
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err)
-      return res.status(403).sendStatus(403).json({ message: "error token" });
+      return res.status(403).json({ message: "error authn token", error: true });
     req.user = user;
     next();
   });

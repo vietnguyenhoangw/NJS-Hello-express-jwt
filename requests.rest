@@ -1,11 +1,14 @@
 # add token and send request
 GET http://localhost:3000
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbGwiLCJwYXNzd29yZCI6IjQ1NiIsInRpdGxlIjoiVGl0bGUgbmV3IiwiaWF0IjoxNjE2MjQ5MDg0LCJleHAiOjE2MTYyNTA4ODR9.kMQB-XPecm5K1OuUasFOgjFTi9UaamATEhj9KPwRKMw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbCIsInRpdGxlIjoiRGFuaWVsIGFuZCBmcmllbmRzIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJpYXQiOjE2MTYzOTY4ODIsImV4cCI6MTYxNjM5NjkxMn0.IVCli7jJqrD5saBSEMzFuvXoj8Wu0UIplTQ9iWc8YZg
+
+# refresh token:
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbCIsInRpdGxlIjoiRGFuaWVsIGFuZCBmcmllbmRzIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJpYXQiOjE2MTYzOTY4MTN9.fxySExYdOUekPt5bIE4bwVcRctbCQSWJTMbPSKyUmmw
 
 ###
 
 GET http://localhost:3000/user
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbCIsInRpdGxlIjoiRGFuaWVsIGFuZCBmcmllbmRzIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJpYXQiOjE2MTYyNDkyMjMsImV4cCI6MTYxNjI1MTAyM30.9RIssMwnlo6xAT2c362lG5Cx3PaOxAXK2lf4pCKVA5k
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbCIsInRpdGxlIjoiRGFuaWVsIGFuZCBmcmllbmRzIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJpYXQiOjE2MTYzOTY4NDcsImV4cCI6MTYxNjM5Njg3N30.vmIAIVQ8clErAx31rW57QGTSnmB9DLIZZp-xVbYcSec
 ###
 
 # login to get token
@@ -26,4 +29,13 @@ Content-Type: application/json
     "username": "HelloMotherFucker",
     "password": "123123",
     "title": "Title new for hello"
+}
+###
+
+# register a new user
+POST http://localhost:3000/token
+Content-Type: application/json
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbCIsInRpdGxlIjoiRGFuaWVsIGFuZCBmcmllbmRzIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJpYXQiOjE2MTYzOTY4MTN9.fxySExYdOUekPt5bIE4bwVcRctbCQSWJTMbPSKyUmmw"
 }
