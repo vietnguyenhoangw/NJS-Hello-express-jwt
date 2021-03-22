@@ -1,6 +1,6 @@
 # add token and send request
-GET http://localhost:3000
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbCIsInRpdGxlIjoiRGFuaWVsIGFuZCBmcmllbmRzIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJpYXQiOjE2MTYzOTY4ODIsImV4cCI6MTYxNjM5NjkxMn0.IVCli7jJqrD5saBSEMzFuvXoj8Wu0UIplTQ9iWc8YZg
+GET http://localhost:3003
+Authorization: Bearer 
 
 # refresh token:
 # eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbCIsInRpdGxlIjoiRGFuaWVsIGFuZCBmcmllbmRzIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJpYXQiOjE2MTYzOTY4MTN9.fxySExYdOUekPt5bIE4bwVcRctbCQSWJTMbPSKyUmmw
