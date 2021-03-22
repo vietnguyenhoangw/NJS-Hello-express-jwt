@@ -42,16 +42,8 @@ const users = [
 ];
 const refreshTokens = []
 
+// route
 app.use(require('./routers'))
-
-// simple route
-// app.get("/", authenticateToken, (req, res) => {
-//   res.status(200).json({ message: "Welcome to hello express jwt.", error: false });
-// });
-
-// app.get("/user", authenticateToken, (req, res) => {
-//   res.status(200).json(users.filter((user) => user.username === req.user.username));
-// });
 
 // app.post("/login", (req, res) => {
 //   // authenticate user

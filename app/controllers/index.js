@@ -1,6 +1,6 @@
 // dafault router route
-const home = (req, res) => {
+const homeIndex = (req, res) => {
     res.status(200).json({ message: "Welcome to hello express jwt.", error: false });
 }
 
-module.exports = { home }
+module.exports = { homeIndex }
