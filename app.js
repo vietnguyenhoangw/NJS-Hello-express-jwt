@@ -137,7 +137,7 @@ function authenticateToken(req, res, next) {
   if (token == null) return res.sendStatus(401);
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err)
-      return res.status(403).json({ message: "error authn token", error: true });
+      return res.status(403).json({ message: "error auth token", error: true });
     req.user = user;
     next();
   });
