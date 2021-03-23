@@ -3,4 +3,6 @@ const users = [
     { username: "Henry", title: "Henry and his girl friend", password: "123123" },
 ];
 
-module.exports = { users }
+const refreshTokens = []
+
+module.exports = { users, refreshTokens }

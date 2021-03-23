@@ -1,18 +1,19 @@
 # add token and send request
 GET http://localhost:3003
-Authorization: Bearer 
-
-# refresh token:
-# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbCIsInRpdGxlIjoiRGFuaWVsIGFuZCBmcmllbmRzIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJpYXQiOjE2MTYzOTY4MTN9.fxySExYdOUekPt5bIE4bwVcRctbCQSWJTMbPSKyUmmw
+Authorization: Bearer ...
 
 ###
 
-GET http://localhost:3000/user
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbCIsInRpdGxlIjoiRGFuaWVsIGFuZCBmcmllbmRzIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJpYXQiOjE2MTYzOTY4NDcsImV4cCI6MTYxNjM5Njg3N30.vmIAIVQ8clErAx31rW57QGTSnmB9DLIZZp-xVbYcSec
+# USER
+# get user
+GET http://localhost:3003/user
+Authorization: Bearer ...
 ###
 
+
+# AUTH
 # login to get token
-POST http://localhost:3000/login
+POST http://localhost:3003/auth/login
 Content-Type: application/json
 
 {
@@ -22,20 +23,20 @@ Content-Type: application/json
 ###
 
 # register a new user
-POST http://localhost:3000/register
+POST http://localhost:3003/auth/register
 Content-Type: application/json
 
 {
-    "username": "HelloMotherFucker",
+    "username": "ViAiPi",
     "password": "123123",
     "title": "Title new for hello"
 }
 ###
 
 # register a new user
-POST http://localhost:3000/token
+POST http://localhost:3003/auth/token
 Content-Type: application/json
 
 {
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkRhbmllbCIsInRpdGxlIjoiRGFuaWVsIGFuZCBmcmllbmRzIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJpYXQiOjE2MTYzOTY4MTN9.fxySExYdOUekPt5bIE4bwVcRctbCQSWJTMbPSKyUmmw"
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkhlbGxvTW90aGVyRnVja2VyIiwicGFzc3dvcmQiOiIxMjMxMjMiLCJ0aXRsZSI6IlRpdGxlIG5ldyBmb3IgaGVsbG8iLCJpYXQiOjE2MTY0NzExOTN9.8c5H2g_9k9TGUe2-pJuBpi1-MAndxZpe9nHCL-v3Q4s"
 }
